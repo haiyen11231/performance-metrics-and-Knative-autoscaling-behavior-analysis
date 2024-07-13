@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package load_worker;
+
+// option go_package = "github.com/performance-metrics-and-Knative-autoscaling-behavior-analysis/proto/pb";
+option go_package = "./";
+
+service LoadWorker {
+    rpc InvokeWorker(WorkRequest) returns (WorkResponse);
+}
+
+message WorkRequest {
+    // Duration of the busy-spin loop in milliseconds
+    int64 duration_ms = 1;
+}
+
+message WorkResponse {
+    // Acknowledgment message
+    string message = 1;
+}
