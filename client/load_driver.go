@@ -24,24 +24,26 @@ func main() {
 	rps := 5
 	// Duration for each busy-spin
 	duration := 1 * time.Second
+	// Test duration in seconds
+	testDuration := 10 * time.Second
+	end := time.Now().Add(testDuration)
 
-	for {
-		start := time.Now()
-		for i := 0; i < rps; i++ {
-			go func() {
-				req := &pb.WorkRequest{DurationMs: int64(duration / time.Millisecond)}
-				startReq := time.Now()
-				_, err := client.InvokeWorker(context.Background(), req)
+	ticker := time.NewTicker(time.Second / time.Duration(rps))
+	defer ticker.Stop()
 
-				if err != nil {
-					log.Printf("could not invoke worker: %v", err)
-				}
+	for time.Now().Before(end) {
+		<-ticker.C
+		go func() {
+			req := &pb.WorkRequest{DurationMs: int64(duration / time.Millisecond)}
+			startReq := time.Now()
+			_, err := client.InvokeWorker(context.Background(), req)
 
-				latency := time.Since(startReq)
-				log.Printf("E2E latency: %v", latency)
-			}()
-		}
+			if err != nil {
+				log.Printf("could not invoke worker: %v", err)
+			}
 
-		time.Sleep(time.Second - time.Since(start))
+			latency := time.Since(startReq)
+			log.Printf("E2E latency: %v", latency)
+		}()
 	}
 }
