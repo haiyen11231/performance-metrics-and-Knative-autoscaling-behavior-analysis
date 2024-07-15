@@ -1,3 +1,5 @@
+# Protobuf generation
+
 gen:
 	protoc --go_out=./proto/pb --go-grpc_out=./proto/pb proto/*.proto
 
@@ -6,6 +8,9 @@ gen:
 
 clean:
 	rm ./proto/pb/*.go
+
+# Build and run locally
+.PHONY: server client
 
 server:
 	go run server/worker.go
