@@ -1,0 +1,11 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: worker-service
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: haiyen11231/lab-project-server:1.0
+          name: server
