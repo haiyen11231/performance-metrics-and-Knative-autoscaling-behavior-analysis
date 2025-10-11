@@ -36,7 +36,7 @@ func (s *Server) InvokeWorker(ctx context.Context, req *pb.WorkRequest) (*pb.Wor
 
 func main() {
 	// Setting up a TCP listener on port 50051
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
