@@ -14,7 +14,7 @@ func main() {
 	log.Println("Client started")
     log.Println("Connecting to target: worker:50051")
 
-	conn, err := grpc.Dial("0.0.0.0:50051", grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial("worker:50051", grpc.WithInsecure(), grpc.WithBlock())
 
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
