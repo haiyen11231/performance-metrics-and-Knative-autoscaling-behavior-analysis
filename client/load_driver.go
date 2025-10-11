@@ -11,6 +11,9 @@ import (
 
 // Generates requests and records latency
 func main() {
+	log.Println("Client started")
+    log.Println("Connecting to target: worker:50051")
+
 	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
 
 	if err != nil {
@@ -18,6 +21,8 @@ func main() {
 	}
 
 	defer conn.Close()
+
+	log.Println("Connected successfully")
 
 	client := pb.NewLoadWorkerClient(conn)
 
