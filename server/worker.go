@@ -14,6 +14,7 @@ type Server struct {
 	pb.UnimplementedLoadWorkerServer
 }
 
+// Simulates load and responds
 func (s *Server) InvokeWorker(ctx context.Context, req *pb.WorkRequest) (*pb.WorkResponse, error) {
 	duration := time.Duration(req.DurationMs) * time.Millisecond
 	end := time.Now().Add(duration)
@@ -23,6 +24,14 @@ func (s *Server) InvokeWorker(ctx context.Context, req *pb.WorkRequest) (*pb.Wor
 	}
 
 	return &pb.WorkResponse{Message: "Acknowledged"}, nil
+
+	// start := time.Now()
+    // end := start.Add(time.Duration(req.DurationMs) * time.Millisecond)
+    // for time.Now().Before(end) {
+    //     // busy spin
+    // }
+    // elapsed := time.Since(start).Milliseconds()
+    // return &pb.WorkResponse{Message: fmt.Sprintf("Processed in %d ms", elapsed)}, nil
 }
 
 func main() {

@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Generates requests and records latency
 func main() {
 	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
 
@@ -37,13 +38,12 @@ func main() {
 			req := &pb.WorkRequest{DurationMs: int64(duration / time.Millisecond)}
 			startReq := time.Now()
 			_, err := client.InvokeWorker(context.Background(), req)
-
+			latency := time.Since(startReq)
 			if err != nil {
 				log.Printf("could not invoke worker: %v", err)
+			} else {
+				log.Printf("E2E latency: %v", latency)
 			}
-
-			latency := time.Since(startReq)
-			log.Printf("E2E latency: %v", latency)
 		}()
 	}
 }

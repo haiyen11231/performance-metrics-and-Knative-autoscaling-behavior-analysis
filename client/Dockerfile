@@ -1,41 +1,21 @@
-FROM golang:1.22 as builder
+# ===== Stage 1: Builder =====
+FROM golang:1.22.4-alpine AS builder
 
-# Install protobuf compiler
-RUN apt-get update && apt-get install -y protobuf-compiler
-
-# Install protoc-gen-go and protoc-gen-go-grpc
-RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the go.mod and go.sum files to the container
-COPY go.mod go.sum ./
-
-# Download all dependencies specified in go.mod and go.sum
+COPY . .
 RUN go mod download
 
-# Set the working directory for proto files
-WORKDIR /app/proto
-# Copy proto files
-COPY proto/ ./
-# Generate Go code from protobuf definitions
-RUN protoc --go_out=./pb --go-grpc_out=./pb *.proto
+# Build the load_driver binary for Linux x86_64
+RUN GOOS=linux GOARCH=amd64 go build -o load_driver ./client/load_driver.go
 
-# Set the working directory for the client source code
-WORKDIR /app/client
-# Copy client source code
-COPY client/ ./
+# ===== Stage 2: Runtime =====
+FROM gcr.io/distroless/base-debian11
 
-# Build the client application binary for Linux (amd64 architecture)
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /load_driver load_driver.go
-
-# Use a minimal image for running the client
-FROM alpine:latest
-
-# Copy the built binary from the builder stage to the final image
-COPY --from=builder /load_driver /load_driver
+# Copy the compiled binary
+COPY --from=builder /app/load_driver /load_driver
 
 # Set the entrypoint to run the client application
 ENTRYPOINT ["/load_driver"]
+
+
