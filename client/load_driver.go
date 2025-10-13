@@ -44,11 +44,17 @@ func nowMs() int64 {
     return time.Now().UnixNano() / int64(time.Millisecond)
 }
 
-
 // Generate requests and record latency
 func main() {
+	// target (DNS name): worker.default.svc.cluster.local:50051 
+	// if the worker is defined in deployment "networking.knative.dev/visibility: "cluster-local""
+	// and load driver must run in-cluster
+
+	// otherwise use the external DNS name with port 80 (http)
+	// use Knative external URL: worker.default.192.168.1.240.sslip.io:80
+	// but that will go through gateway and may add latency
 	var (
-		target    = flag.String("target", "worker.default.192.168.1.240.sslip.io:80", "target worker address")
+		target    = flag.String("target", "worker.default.svc.cluster.local:50051", "target worker address")
 		rps       = flag.Int("rps", 5, "requests per second")
 		spinInMs    = flag.Int("spin-ms", 100, "worker busy spin in milliseconds - simulate CPU load")
 		duration  = flag.Duration("duration", 12*time.Minute, "total duration to run")
@@ -123,7 +129,7 @@ func main() {
 				startReq := time.Now()
 				_, err := client.InvokeWorker(ctx, req)
 				latency := time.Since(startReq).Milliseconds()
-				
+
 				// Record metrics and log to CSV
 				if err != nil {
 					log.Printf("could not invoke worker: %v", err)
