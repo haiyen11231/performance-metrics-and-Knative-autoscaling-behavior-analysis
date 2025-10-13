@@ -18,8 +18,6 @@ spec:
         # prometheus.io/scrape: "true"
         # prometheus.io/port: "2112"
     spec:
-      nodeSelector:
-        role: worker
       containers:
         - image: haiyen11231/worker:3.0
           ports:
