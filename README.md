@@ -106,4 +106,31 @@ sudo apt-get install helm
 - Install kube-prometheus-stack
   This automatically installs Prometheus, Alertmanager, Grafana, ServiceMonitors for comprehensive Kubernetes monitoring.
 
+```
+helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+```
+
+- Verify pods:
+
+```
+kubectl get pods -n monitoring
+```
+
+- Port-forward to access dashboards locally:
+
+```
+bash scripts/port_forward.sh
+```
+
+kubectl --namespace monitoring get pods -l "release=monitoring"
+
+Get Grafana 'admin' user password by running:
+
+kubectl --namespace monitoring get secrets monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+
+Access Grafana local instance:
+
+export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=monitoring" -oname)
+kubectl --namespace monitoring port-forward $POD_NAME 3000
+
 whether using NodePort or port forwarding???
