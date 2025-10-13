@@ -1,0 +1,25 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: worker
+  namespace: default
+  annotations:
+    autoscaling.knative.dev/minScale: "0"
+    autoscaling.knative.dev/maxScale: "10"
+    autoscaling.knative.dev/class: "kpa.autoscaling.knative.dev"
+    networking.knative.dev/visibility: "cluster-local"
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/target: "10"
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: node-001.haiyen-273246.ntu-cloud.emulab.net
+      containers:
+        - image: YOUR_REGISTRY/worker:latest
+          ports:
+            - containerPort: 50051
+          env:
+            - name: METRICS_PORT
+              value: "2112"

@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-driver
+  namespace: default
+  labels:
+    run: load-driver
+spec:
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: node-000.haiyen-273246.ntu-cloud.emulab.net
+      restartPolicy: Never
+      containers:
+        - name: load-driver
+          image: <your-dockerhub-username>/load-driver:latest
+          args:
+            [
+              "--target",
+              "worker.default.svc.cluster.local:50051",
+              "--rps",
+              "5",
+              "--spin-ms",
+              "100",
+              "--duration",
+              "12m",
+              "--out",
+              "/out/results.csv",
+              "--metrics-port",
+              "2113",
+            ]
+          volumeMounts:
+            - name: results
+              mountPath: /out
+      volumes:
+        - name: results
+          emptyDir: {}

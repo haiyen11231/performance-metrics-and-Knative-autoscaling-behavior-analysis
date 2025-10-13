@@ -59,7 +59,7 @@ func main() {
 		spinInMs    = flag.Int("spin-ms", 100, "worker busy spin in milliseconds - simulate CPU load")
 		duration  = flag.Duration("duration", 12*time.Minute, "total duration to run")
 		outFile   = flag.String("out", "/out/results.csv", "CSV output path (inside pod)")
-		metricsPort = flag.Int("load-driver-metrics-port", 2113, "load driver Prometheus metrics port")
+		metricsPort = flag.Int("metrics-port", 2113, "load driver Prometheus metrics port")
 	)
 	flag.Parse()
 

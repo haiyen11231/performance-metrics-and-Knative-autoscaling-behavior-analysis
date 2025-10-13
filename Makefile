@@ -15,8 +15,8 @@ client:
 	go run client/load_driver.go
 
 REG := haiyen11231
-WORKER_IMG := $(REG)/worker:2.0
-DRIVER_IMG := $(REG)/load-driver:2.0
+WORKER_IMG := $(REG)/worker:3.0
+DRIVER_IMG := $(REG)/load-driver:3.0
 
 build:
 	docker build -t $(WORKER_IMG) -f server/Dockerfile .
@@ -26,9 +26,9 @@ push:
 	docker push $(WORKER_IMG)
 	docker push $(DRIVER_IMG)
 
-# deploy: push
-# 	kubectl apply -f deployment/worker-service.yaml
-# 	kubectl apply -f deployment/load-driver-service.yaml
+deploy:
+	kubectl apply -f deployment/knative-worker.yaml
+	kubectl apply -f deployment/load-driver-job.yaml
 
 # build-server:
 # 	docker build -t haiyen11231/worker:2.0 -f server/Dockerfile .

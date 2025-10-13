@@ -78,7 +78,7 @@ func (s *server) InvokeWorker(ctx context.Context, req *pb.WorkRequest) (*pb.Wor
 func main() {
 	var (
 		grpcPort   = flag.Int("grpc-port", 50051, "gRPC server port")
-		metricsPort = flag.Int("worker-metrics-port", 2112, "worker Prometheus metrics port")
+		metricsPort = flag.Int("metrics-port", 2112, "worker Prometheus metrics port")
 	)
 	flag.Parse()
 
