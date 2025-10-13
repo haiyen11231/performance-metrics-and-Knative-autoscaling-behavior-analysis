@@ -12,14 +12,23 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/target: "10"
+        # For KPA, RPS per pod
+        autoscaling.knative.dev/target: "10" # 1 pod should handle ~10 RPS; scale up if traffic is higher.
+        # Dont need this b/c of using ServiceMonitor (CRD from kube-prometheus-stack)
+        # prometheus.io/scrape: "true"
+        # prometheus.io/port: "2112"
     spec:
       nodeSelector:
         kubernetes.io/hostname: node-001.haiyen-273246.ntu-cloud.emulab.net
       containers:
-        - image: YOUR_REGISTRY/worker:latest
+        - image: haiyen11231/worker:3.0
           ports:
             - containerPort: 50051
+              name: grpc
+            - containerPort: 2112
+              name: metrics
           env:
+            - name: GRPC_PORT
+              value: "50051"
             - name: METRICS_PORT
               value: "2112"

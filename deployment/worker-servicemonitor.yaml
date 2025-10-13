@@ -6,7 +6,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: worker-fn
+      app: worker
   namespaceSelector:
     any: true
   endpoints:

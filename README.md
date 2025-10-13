@@ -83,3 +83,27 @@ Update the values with your own configuration:
    ```bash
    make client
    ```
+
+- Install Helm
+  https://helm.sh/docs/intro/install/
+
+```
+sudo apt-get install curl gpg apt-transport-https --yes
+curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+```
+
+- Add the official Helm repositories for Prometheus and Grafana
+
+```
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo add grafana https://grafana.github.io/helm-charts
+   helm repo update
+```
+
+- Install kube-prometheus-stack
+  This automatically installs Prometheus, Alertmanager, Grafana, ServiceMonitors for comprehensive Kubernetes monitoring.
+
+whether using NodePort or port forwarding???

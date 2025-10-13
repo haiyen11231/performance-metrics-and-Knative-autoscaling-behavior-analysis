@@ -3,17 +3,19 @@ kind: Job
 metadata:
   name: load-driver
   namespace: default
-  labels:
-    run: load-driver
 spec:
   template:
+    # metadata:
+    #   annotations:
+    #     prometheus.io/scrape: "true"
+    #     prometheus.io/port: "2113"
     spec:
       nodeSelector:
         kubernetes.io/hostname: node-000.haiyen-273246.ntu-cloud.emulab.net
       restartPolicy: Never
       containers:
         - name: load-driver
-          image: <your-dockerhub-username>/load-driver:latest
+          image: haiyen11231/load-driver:3.0
           args:
             [
               "--target",
@@ -29,6 +31,9 @@ spec:
               "--metrics-port",
               "2113",
             ]
+          ports:
+            - containerPort: 2113
+              name: metrics
           volumeMounts:
             - name: results
               mountPath: /out
