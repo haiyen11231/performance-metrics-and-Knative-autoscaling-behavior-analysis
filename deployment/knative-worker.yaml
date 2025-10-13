@@ -20,6 +20,7 @@ spec:
     spec:
       containers:
         - image: haiyen11231/worker:3.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 50051 # grpc
           env:

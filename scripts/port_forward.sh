@@ -1,7 +1,7 @@
 #!/bin/bash
 # Forward Prometheus and Grafana ports
-kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090 -n monitoring &
-kubectl port-forward svc/grafana 3000:80 -n monitoring &
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring &
+kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring &
 
 wait 
 

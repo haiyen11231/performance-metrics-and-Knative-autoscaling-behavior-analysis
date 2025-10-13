@@ -16,6 +16,7 @@ spec:
       containers:
         - name: load-driver
           image: haiyen11231/load-driver:3.0
+          imagePullPolicy: Always
           args:
             [
               "--target",
