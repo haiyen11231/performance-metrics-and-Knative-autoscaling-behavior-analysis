@@ -31,9 +31,9 @@ spec:
               "--metrics-port",
               "2113",
             ]
-          ports:
-            - containerPort: 2113
-              name: metrics
+          env:
+            - name: METRICS_PORT
+              value: "2113"
           volumeMounts:
             - name: results
               mountPath: /out
