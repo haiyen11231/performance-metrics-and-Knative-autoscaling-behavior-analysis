@@ -15,5 +15,6 @@ FROM gcr.io/distroless/base-debian11
 # Copy the compiled binary
 COPY --from=builder /app/worker /worker
 
+EXPOSE 50051 2112 
 # Set the entrypoint to run the server application
 ENTRYPOINT ["/worker"]

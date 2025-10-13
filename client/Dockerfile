@@ -15,6 +15,8 @@ FROM gcr.io/distroless/base-debian11
 # Copy the compiled binary
 COPY --from=builder /app/load_driver /load_driver
 
+EXPOSE 2113
+
 # Set the entrypoint to run the client application
 ENTRYPOINT ["/load_driver"]
 
