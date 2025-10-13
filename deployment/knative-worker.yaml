@@ -19,7 +19,7 @@ spec:
         # prometheus.io/port: "2112"
     spec:
       nodeSelector:
-        kubernetes.io/hostname: node-001.haiyen-273246.ntu-cloud.emulab.net
+        role: worker
       containers:
         - image: haiyen11231/worker:3.0
           ports:
