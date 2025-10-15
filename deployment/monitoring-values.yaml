@@ -1,0 +1,16 @@
+grafana:
+  service:
+    type: NodePort
+    nodePort: 32000 # Choose any stable NodePort (30000–32767)
+
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 32001
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+prometheusOperator:
+  admissionWebhooks:
+    patch:
+      enabled: true
