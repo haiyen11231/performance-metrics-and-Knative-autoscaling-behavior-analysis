@@ -49,7 +49,7 @@ for spin in $(seq ${SPIN_START} ${SPIN_STEP} ${SPIN_MAX}); do
     # wait for job to start and run for RUN_DURATION
     # wait until job active or succeeded
     echo "Waiting for job to start..."
-    kubectl wait --for=condition=complete job/load-driver-${rps}rps-${spin}ms --timeout=$(echo ${RUN_DURATION} | sed 's/m/*60s/') || true
+    kubectl wait --for=condition=complete job/load-driver-${rps}rps-${spin}ms --timeout="${RUN_DURATION}" || true
 
     # Give an extra minute to ensure file flushed
     sleep 10
@@ -63,7 +63,7 @@ for spin in $(seq ${SPIN_START} ${SPIN_STEP} ${SPIN_MAX}); do
     else
       # copy results file if exists
       local_out="${OUTDIR}/results-${runname}.csv"
-      kubectl cp default/${POD}:/out/results.csv "${local_out}" || echo "No results.csv in pod"
+      kubectl exec ${POD} -- cat /out/results.csv > "${local_out}" || echo "No results.csv in pod"
       # parse CSV to count total and failures
       total=$(awk 'END{print NR-1}' "${local_out}" 2>/dev/null || echo 0)  # header excluded
       # count failures: last column == failure
