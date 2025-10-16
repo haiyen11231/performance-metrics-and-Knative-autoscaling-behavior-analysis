@@ -12,7 +12,7 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: node-000.haiyen-273246.ntu-cloud.emulab.net
-      # restartPolicy: Never
+      restartPolicy: Never
       containers:
         - name: load-driver
           image: haiyen11231/load-driver:3.1
