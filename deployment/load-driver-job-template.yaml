@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-driver-{{RPS}}rps-{{SPIN}}ms
+  namespace: default
+spec:
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: node-000.haiyen-273246.ntu-cloud.emulab.net
+      restartPolicy: Never
+      containers:
+        - name: load-driver
+          image: haiyen11231/load-driver:3.1
+          imagePullPolicy: Always
+          args:
+            - "--target"
+            - "worker.default.svc.cluster.local:80"
+            - "--rps"
+            - "{{RPS}}"
+            - "--spin-ms"
+            - "{{SPIN}}"
+            - "--duration"
+            - "{{DURATION}}"
+            - "--out"
+            - "/out/results.csv"
+            - "--metrics-port"
+            - "2113"
+          env:
+            - name: METRICS_PORT
+              value: "2113"
+          volumeMounts:
+            - name: results
+              mountPath: /out
+      volumes:
+        - name: results
+          emptyDir: {}
