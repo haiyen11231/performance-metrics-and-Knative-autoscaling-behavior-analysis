@@ -63,6 +63,8 @@ func main() {
 	)
 	flag.Parse()
 
+	log.Println("This is version 3.1")
+
 	// Start load driver Prometheus metrics server
 	http.Handle("/metrics", promhttp.Handler())
 	go func() {

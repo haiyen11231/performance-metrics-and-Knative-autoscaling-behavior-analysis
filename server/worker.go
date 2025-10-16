@@ -81,6 +81,8 @@ func main() {
 		metricsPort = flag.Int("metrics-port", 2112, "worker Prometheus metrics port")
 	)
 	flag.Parse()
+	
+	log.Println("This is version 3.1")
 
 	// Start worker Prometheus metrics server
 	http.Handle("/metrics", promhttp.Handler())
