@@ -20,7 +20,7 @@ spec:
           args:
             [
               "--target",
-              "worker.default.svc.cluster.local:50051",
+              "worker.default.svc.cluster.local:80",
               "--rps",
               "5",
               "--spin-ms",
