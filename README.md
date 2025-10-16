@@ -157,4 +157,12 @@ kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-us
  kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
 
+to deploy load-driver on node 0, we need to remove the taint temporarily
+
+```
+kubectl taint nodes node-000.haiyen-273246.ntu-cloud.emulab.net node-role.kubernetes.io/control-plane-
+```
+
+This removes the taint from the control-plane node — so you can schedule pods on it.
+
 whether using NodePort or port forwarding???
