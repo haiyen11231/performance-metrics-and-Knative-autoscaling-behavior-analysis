@@ -54,9 +54,9 @@ func main() {
 	// use Knative external URL: worker.default.192.168.1.240.sslip.io:80
 	// but that will go through gateway and may add latency
 	var (
-		target    = flag.String("target", "worker.default.svc.cluster.local:80", "target worker address")
+		target    = flag.String("target", "worker.default.192.168.1.240.sslip.io:80", "target worker address")
 		rps       = flag.Int("rps", 5, "requests per second")
-		spinInMs    = flag.Int("spin-ms", 100, "worker busy spin in milliseconds - simulate CPU load")
+		spinInMs  = flag.Int("spin-ms", 100, "worker busy spin in milliseconds - simulate CPU load")
 		duration  = flag.Duration("duration", 12*time.Minute, "total duration to run")
 		outFile   = flag.String("out", "/out/results.csv", "CSV output path (inside pod)")
 		metricsPort = flag.Int("metrics-port", 2113, "load driver Prometheus metrics port")
