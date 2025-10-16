@@ -22,7 +22,8 @@ spec:
         - image: haiyen11231/worker:3.0
           imagePullPolicy: Always
           ports:
-            - containerPort: 50051 # grpc
+            - name: h2c
+              containerPort: 50051 # grpc
           env:
             - name: GRPC_PORT
               value: "50051"
