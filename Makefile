@@ -15,8 +15,8 @@ client:
 	go run client/load_driver.go
 
 REG := haiyen11231
-WORKER_IMG := $(REG)/worker:3.0
-DRIVER_IMG := $(REG)/load-driver:3.0
+WORKER_IMG := $(REG)/worker:3.1
+DRIVER_IMG := $(REG)/load-driver:3.1
 
 build:
 	docker build -t $(WORKER_IMG) -f server/Dockerfile .
