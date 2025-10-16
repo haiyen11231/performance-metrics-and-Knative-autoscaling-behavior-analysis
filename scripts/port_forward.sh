@@ -1,8 +1,18 @@
 #!/bin/bash
-# Forward Prometheus and Grafana ports
-kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring &
+
+# Kill previous port-forwards just in case
+pkill -f "kubectl port-forward"
+
+# Forward Grafana
+echo "Starting Grafana port-forward..."
 kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring &
 
-wait 
+# Forward Prometheus
+echo "Starting Prometheus port-forward..."
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090 -n monitoring &
 
-echo "Port-forwarding started: Prometheus: http://localhost:9090, Grafana: http://localhost:3000"
+wait
+
+echo "Port-forwarding started:
+Grafana: http://localhost:3000
+Prometheus: http://localhost:9090"

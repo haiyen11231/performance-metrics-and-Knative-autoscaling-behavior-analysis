@@ -132,5 +132,29 @@ Access Grafana local instance:
 
 export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=monitoring" -oname)
 kubectl --namespace monitoring port-forward $POD_NAME 3000
+port forward on node 0, and then ssh tunel in local machine:
+
+```
+ssh -L 3000:127.0.0.1:3000 haiyen@pc786.emulab.net
+ssh -L 9090:127.0.0.1:9090 haiyen@pc786.emulab.net
+or
+ssh -L 3000:127.0.0.1:3000 -L 9090:127.0.0.1:9090 haiyen@pc786.emulab.net
+```
+
+then can access Grafana and Prometheus from local machine: Grafana: http://localhost:3000, Prometheus: http://localhost:9090
+
+Grafana:
+
+- Username:
+
+```
+kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-user}" | base64 --decode
+```
+
+- Password:
+
+```
+ kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
+```
 
 whether using NodePort or port forwarding???
