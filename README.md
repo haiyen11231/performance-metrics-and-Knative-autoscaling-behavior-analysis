@@ -1,106 +1,95 @@
-# Performance metrics and Knative's autoscaling behavior analysis
+# 🚀 Performance metrics and Knative's autoscaling behavior analysis
 
-This project focuses on analyzing Knative's autoscaling behavior through a custom setup and experimentation. The tasks include writing a **Load Driver program** and a **Worker function**, setting up a two-node Knative cluster, and measuring performance metrics during the process.
+This project analyzes **Knative’s autoscaling behavior (KPA)** under varying load conditions.
+It sets up a distributed load-testing environment where a gRPC-based worker service is deployed on Knative, monitored via Prometheus and Grafana, and benchmarked using a custom load driver written in Go.
 
-## Directory Structure
+## 🧭 Directory Structure
 
 ```plaintext
 performance-metrics-and-Knative-autoscaling-behavior-analysis/
 │
-├── client/
+├── client/                      # Load generator (load driver)
 │   ├── Dockerfile
 │   └── load_driver.go
 │
-├── deployment/
-│   ├── load-driver-service.yaml
-│   └── worker-service.yaml
-│
-├── proto/
-│   ├── pb/
-│   │   ├── load_worker_grpc.pb.go
-│   │   └── load_worker.pb.go
-│   │
-│   └── load_worker.proto
-|
-├── server/
+├── server/                      # Worker service (Knative-deployed)
 │   ├── Dockerfile
 │   └── worker.go
-|
-├── .gitignore
-├── app.env
+│
+├── deployment/                  # YAML manifests for deployment
+│   ├── knative-autoscaler-servicemonitor.yaml
+│   ├── knative-worker.yaml
+│   ├── load-driver-job-template.yaml
+│   ├── load-driver-job.yaml
+│   ├── worker-metrics-service.yaml
+│   └── worker-servicemonitor.yaml
+│
+├── proto/                       # gRPC definitions
+│   ├── pb/
+│   │   ├── load_worker.pb.go
+│   │   └── load_worker_grpc.pb.go
+│   └── load_worker.proto
+│
+├── scripts/                     # Experiment automation scripts
+│   ├── build_and_push.sh
+│   ├── collect_prometheus.sh
+│   ├── deploy_all.sh
+│   ├── port_forward.sh
+│   ├── run_experiments.sh
+│   └── worker.go
+│
+├── tools/
+│   └── analyze_plot.py           # Post-experiment data analysis
+│
+├── assets/
 ├── go.mod
 ├── go.sum
 ├── Makefile
 └── README.md
 ```
 
-## Prerequisites
+![alt text](/assets/load_driver%20and%20worker%20architecture.png)
 
-Before you begin, ensure that you have the following installed:
+## 🧩 Setup Instructions
 
-- **Go**
-- **gRPC Tools** (Protocol Buffers and gRPC Go)
-- **Make**
-- **Docker**
-- **Kubernetes**
-- **Knative**
+#### 1. Set Up a Two-Node Knative Cluster
 
-## Installation
+Follow the vHive guide to set up a two-node Knative (stock-only) cluster on [CloudLab](https://www.cloudlab.us/):
 
-1. Clone the repository:
+📘 [vHive Quickstart Guide](https://github.com/vhive-serverless/vHive/blob/main/docs/quickstart_guide.md#iv-deploying-and-invoking-functions)
 
-   ```bash
-   git clone https://github.com/haiyen11231/performance-metrics-and-Knative-autoscaling-behavior-analysis.git
-   cd performance-metrics-and-Knative-autoscaling-behavior-analysis
-   ```
+After provisioning the D430 nodes, install dependencies on both nodes:
 
-2. Create the app.env file:
-
-Create a `app.env` file in the root directory of the project. This file should contain the environment variables required for the application to run. Here's a sample `app.env` file:
-
-```env
-PORT=port
+```
+sudo apt update
+sudo apt install -y git make docker.io
+sudo systemctl enable docker && sudo systemctl start docker
 ```
 
-Update the values with your own configuration:
+#### 2. Clone Repository (on Node 0)
 
-- **`PORT`**: Define the port number on which the server will listen (e.g., 50051).
+```
+git clone https://github.com/haiyen11231/performance-metrics-and-Knative-autoscaling-behavior-analysis.git
+cd performance-metrics-and-Knative-autoscaling-behavior-analysis
+```
 
-3. Install dependencies:
-
-   ```bash
-   go mod tidy
-   ```
-
-4. Start the development server:
-
-   ```bash
-   make server
-   ```
-
-5. Start the development client:
-
-   ```bash
-   make client
-   ```
+#### 3. Install Helm and Monitoring Stack
 
 - Install Helm
-  https://helm.sh/docs/intro/install/
 
 ```
 sudo apt-get install curl gpg apt-transport-https --yes
 curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt-get update
-sudo apt-get install helm
+sudo apt-get update && sudo apt-get install helm
 ```
 
-- Add the official Helm repositories for Prometheus and Grafana
+- Add Helm Repositories for Prometheus and Grafana
 
 ```
-   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-   helm repo add grafana https://grafana.github.io/helm-charts
-   helm repo update
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
 ```
 
 - Install kube-prometheus-stack
@@ -110,29 +99,21 @@ sudo apt-get install helm
 helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
 ```
 
-- Verify pods:
+- Verify installation:
 
 ```
 kubectl get pods -n monitoring
 ```
 
-- Port-forward to access dashboards locally:
+#### 4. Access Dashboards (Prometheus & Grafana)
+
+- Run port-forwarding inside Node 0:
 
 ```
-bash scripts/port_forward.sh
+./scripts/port_forward.sh
 ```
 
-kubectl --namespace monitoring get pods -l "release=monitoring"
-
-Get Grafana 'admin' user password by running:
-
-kubectl --namespace monitoring get secrets monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
-
-Access Grafana local instance:
-
-export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=monitoring" -oname)
-kubectl --namespace monitoring port-forward $POD_NAME 3000
-port forward on node 0, and then ssh tunel in local machine:
+- Then, from your local machine, create an SSH tunnel:
 
 ```
 ssh -L 3000:127.0.0.1:3000 haiyen@pc786.emulab.net
@@ -141,31 +122,134 @@ or
 ssh -L 3000:127.0.0.1:3000 -L 9090:127.0.0.1:9090 haiyen@pc786.emulab.net
 ```
 
-then can access Grafana and Prometheus from local machine: Grafana: http://localhost:3000, Prometheus: http://localhost:9090
+Replace `haiyen@pc786.emulab.net` with `<username>@<external-ip-address>` of your node 0.
 
-Grafana:
+- Now open:
+  Grafana: http://localhost:3000
+  Prometheus: http://localhost:9090
 
-- Username:
+- Retrieve Grafana credentials:
 
 ```
+# Username
 kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-user}" | base64 --decode
+# Password
+kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
 
-- Password:
+#### 5. Deploy the Experiment
 
-```
- kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
-```
-
-to deploy load-driver on node 0, we need to remove the taint temporarily
+- Temporarily remove the taint from the control-plane node to allow scheduling on node 0:
 
 ```
 kubectl taint nodes node-000.haiyen-273246.ntu-cloud.emulab.net node-role.kubernetes.io/control-plane-
 ```
 
-This removes the taint from the control-plane node — so you can schedule pods on it.
+- Then deploy everything:
 
-whether using NodePort or port forwarding???
-![alt text](image.png)
+```
+./scripts/deploy_all.sh
+```
 
-![alt text](image-1.png)
+- Check running pods and logs:
+
+```
+kubectl get po
+kubectl logs <load_driver_pod>
+```
+
+#### 6. Run Experiments
+
+```
+./scripts/run_experiments.sh
+```
+
+Results will be stored under `/results` and can be analyzed with `tools/analyze_plot.py`.
+
+## 📊 Observing Metrics
+
+- **Grafana dashboards**
+
+![alt text](./assets/grafana_ns_workload.png)
+
+![alt text](./assets/grafana_kubelet.png)
+
+- **Knative Autoscaler Metrics (system-level)**
+
+`autoscaler_actual_pods`: Number of pods currently allocated by KPA
+
+`autoscaler_desired_pods`: Number of pods KPA wants to allocate
+
+![alt text](./assets/actual_vs_desired_pods.png)
+
+`autoscaler_excess_burst_capacity`: Difference between available and required capacity
+
+![alt text](./assets/autoscaler_excess_burst_capacity.png)
+
+`autoscaler_client_results`: Number of API calls made by autoscaler
+
+![alt text](./assets/autoscaler_client_results.png)
+
+- Worker Service Metrics (application-level)
+
+`worker_request_total`: Total number of requests received
+
+![alt text](./assets/worker_requests_total.png)
+
+`worker_request_latency_ms_bucket`: Histogram of request latencies (p95)
+
+![alt text](./assets/worker_request_latency_ms_bucket.png)
+
+- **Kubernetes / Node Metrics (cluster-level performance)**
+
+`count(kube_pod_info)`: Total number of K8s pods
+
+![alt text](./assets/no_pods_K8s.png)
+
+`node_memory_MemAvailable_bytes`: Node memory available
+
+![alt text](./assets/node_memory_MemAvailable_bytes.png)
+
+## 🧠 Notes
+
+- The Knative worker service is **cluster-local** (`networking.knative.dev/visibility: cluster-local`), so Prometheus must run **inside the same cluster** or be accessed via **SSH tunnel**.
+
+- Use port forwarding (not NodePort) for secure dashboard access.
+
+- All metrics are scraped by Prometheus using `ServiceMonitor` CRDs.
+
+## 🔭 Future Work
+
+- Evaluate **Knative HPA vs KPA** performance under different workloads.
+
+- Integrate **OpenTelemetry (OTel)** for distributed tracing.
+
+- Automate multi-RPS load sweeps and latency heatmaps.
+
+## 📚 References
+
+- [Helm Installation](https://helm.sh/docs/intro/install/)
+
+- Prometheus Go Application Metrics
+  https://prometheus.io/docs/guides/go-application/
+  https://grafana.com/docs/grafana-cloud/knowledge-graph/enable-prom-metrics-collection/application-frameworks/grpc/
+  https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/workload/pod-metrics.md
+  https://fatehaliaamir.medium.com/monitoring-grpc-services-in-golang-with-prometheus-9c15faec351f
+
+- [Deploy Go application (REST) into Knative cluster](https://github.com/knative/docs/tree/main/code-samples/serving/hello-world/helloworld-go)
+
+- Deploy Go application (gRPC) into Knative cluster:
+  https://github.com/knative/docs/tree/main/code-samples/serving/grpc-ping-go
+  https://www.alibabacloud.com/help/en/ack/ack-managed-and-ack-dedicated/user-guide/deploy-grpc-service-in-knative
+  https://stackoverflow.com/questions/70272070/how-to-call-knative-service-grpc-server-by-using-a-python-client
+  Notice port config `h2c`
+
+- [Knative Serving code samples](https://knative.dev/docs/samples/serving/)
+
+- [Getting number of K8s pods running in Prometheus](https://stackoverflow.com/questions/53595703/how-to-get-number-of-pods-running-in-prometheus)
+
+- [Prometheus Go Application Metrics with NodePort](https://medium.com/@muppedaanvesh/a-hands-on-guide-to-kubernetes-monitoring-using-prometheus-grafana-%EF%B8%8F-b0e00b1ae039)
+
+- [Important metrics in Grafana](https://grafana.com/docs/grafana-cloud/knowledge-graph/enable-prom-metrics-collection/application-frameworks/grpc/)
+
+- [Kubernetes Pod Metrics](https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/workload/pod-metrics.md)
