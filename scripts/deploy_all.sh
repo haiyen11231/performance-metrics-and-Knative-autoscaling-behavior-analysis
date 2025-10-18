@@ -14,5 +14,6 @@ kubectl apply -f deployment/worker-metrics-service.yaml
 
 # Deploy ServiceMonitor for Prometheus
 kubectl apply -f deployment/worker-servicemonitor.yaml
+kubectl apply -f deployment/knative-autoscaler-servicemonitor.yaml
 
 echo "Deployments applied."

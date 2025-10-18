@@ -1,16 +1,17 @@
-# monitor application service — worker pods
-# application-level metrics
+# monitor Knative autoscaler service
+# system-level (KPA) metrics
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: worker-sm
+  name: knative-autoscaler-sm
   namespace: monitoring
 spec:
   selector:
     matchLabels:
-      app: worker
+      app: autoscaler
   namespaceSelector:
-    any: true
+    matchNames:
+      - knative-serving
   endpoints:
-    - port: metrics
+    - port: http-metrics
       interval: 15s

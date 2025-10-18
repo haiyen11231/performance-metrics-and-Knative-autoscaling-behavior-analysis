@@ -166,3 +166,6 @@ kubectl taint nodes node-000.haiyen-273246.ntu-cloud.emulab.net node-role.kubern
 This removes the taint from the control-plane node — so you can schedule pods on it.
 
 whether using NodePort or port forwarding???
+![alt text](image.png)
+
+![alt text](image-1.png)
