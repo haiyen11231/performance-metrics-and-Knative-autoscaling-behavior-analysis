@@ -6,12 +6,12 @@ OUTDIR="./results"
 JOB_TEMPLATE="deployment/load-driver-job-template.yaml"
 PROM_URL="${PROM_URL:-http://localhost:9090}"  # set via env if needed
 # experiment params
-RPS_START=5
-RPS_STEP=5
-RPS_MAX=50            # change to desired max RPS
+RPS_START=10
+RPS_STEP=30
+RPS_MAX=100            # change to desired max RPS
 SPIN_START=100        # ms
-SPIN_STEP=100         # ms
-SPIN_MAX=500          # change as desired
+SPIN_STEP=300         # ms
+SPIN_MAX=1000          # change as desired
 RUN_DURATION="12m"    # total job duration
 WARMUP_SECONDS=120    # discard first 2 minutes
 FAIL_THRESHOLD=0.10   # stop when >10% failures
