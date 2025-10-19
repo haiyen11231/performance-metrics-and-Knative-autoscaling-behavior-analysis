@@ -192,18 +192,26 @@ Results will be stored under `/results` and can be analyzed with `tools/analyze_
 
 - [Helm Installation](https://helm.sh/docs/intro/install/)
 
-- Prometheus Go Application Metrics
+- Prometheus Go Application Metrics:
+
   https://prometheus.io/docs/guides/go-application/
+
   https://grafana.com/docs/grafana-cloud/knowledge-graph/enable-prom-metrics-collection/application-frameworks/grpc/
+
   https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/workload/pod-metrics.md
+
   https://fatehaliaamir.medium.com/monitoring-grpc-services-in-golang-with-prometheus-9c15faec351f
 
 - [Deploy Go application (REST) into Knative cluster](https://github.com/knative/docs/tree/main/code-samples/serving/hello-world/helloworld-go)
 
 - Deploy Go application (gRPC) into Knative cluster:
+
   https://github.com/knative/docs/tree/main/code-samples/serving/grpc-ping-go
+
   https://www.alibabacloud.com/help/en/ack/ack-managed-and-ack-dedicated/user-guide/deploy-grpc-service-in-knative
+
   https://stackoverflow.com/questions/70272070/how-to-call-knative-service-grpc-server-by-using-a-python-client
+
   Notice port config `h2c`
 
 - [Knative Serving code samples](https://knative.dev/docs/samples/serving/)
