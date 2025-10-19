@@ -10,7 +10,7 @@ spec:
     metadata:
       annotations:
         autoscaling.knative.dev/minScale: "0"
-        autoscaling.knative.dev/maxScale: "10"
+        autoscaling.knative.dev/maxScale: "3"
         autoscaling.knative.dev/class: "kpa.autoscaling.knative.dev"
         # For KPA, RPS per pod
         autoscaling.knative.dev/target: "10" # 1 pod should handle ~10 RPS; scale up if traffic is higher.

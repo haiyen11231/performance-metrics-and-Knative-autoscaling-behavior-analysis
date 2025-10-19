@@ -7,8 +7,8 @@ JOB_TEMPLATE="deployment/load-driver-job-template.yaml"
 PROM_URL="${PROM_URL:-http://localhost:9090}"  # set via env if needed
 # experiment params
 RPS_START=10
-RPS_STEP=30
-RPS_MAX=100            # change to desired max RPS
+RPS_STEP=40
+RPS_MAX=150            # change to desired max RPS
 SPIN_START=100        # ms
 SPIN_STEP=300         # ms
 SPIN_MAX=1000          # change as desired
