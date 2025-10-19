@@ -168,47 +168,9 @@ Results will be stored under `/results` and can be analyzed with `tools/analyze_
 
 ## 📊 Observing Metrics
 
-- **Grafana dashboards**
+![alt text](./assets/grafana-experiment2.1.png)
 
-![alt text](./assets/grafana_ns_workload.png)
-
-![alt text](./assets/grafana_kubelet.png)
-
-- **Knative Autoscaler Metrics (system-level)**
-
-`autoscaler_actual_pods`: Number of pods currently allocated by KPA
-
-`autoscaler_desired_pods`: Number of pods KPA wants to allocate
-
-![alt text](./assets/actual_vs_desired_pods.png)
-
-`autoscaler_excess_burst_capacity`: Difference between available and required capacity
-
-![alt text](./assets/autoscaler_excess_burst_capacity.png)
-
-`autoscaler_client_results`: Number of API calls made by autoscaler
-
-![alt text](./assets/autoscaler_client_results.png)
-
-- Worker Service Metrics (application-level)
-
-`worker_request_total`: Total number of requests received
-
-![alt text](./assets/worker_requests_total.png)
-
-`worker_request_latency_ms_bucket`: Histogram of request latencies (p95)
-
-![alt text](./assets/worker_request_latency_ms_bucket.png)
-
-- **Kubernetes / Node Metrics (cluster-level performance)**
-
-`count(kube_pod_info)`: Total number of K8s pods
-
-![alt text](./assets/no_pods_K8s.png)
-
-`node_memory_MemAvailable_bytes`: Node memory available
-
-![alt text](./assets/node_memory_MemAvailable_bytes.png)
+![alt text](./assets/grafana-experiment2.2.png)
 
 ## 🧠 Notes
 
