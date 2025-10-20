@@ -223,3 +223,5 @@ Results will be stored under `/results` and can be analyzed with `tools/analyze_
 - [Important metrics in Grafana](https://grafana.com/docs/grafana-cloud/knowledge-graph/enable-prom-metrics-collection/application-frameworks/grpc/)
 
 - [Kubernetes Pod Metrics](https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/workload/pod-metrics.md)
+
+- [Knative Serving - Config serverless concurrency limits](https://docs.redhat.com/en/documentation/red_hat_openshift_serverless/1.35/html/serving/autoscaling#serverless-concurrency-limits-configure-soft_serverless-concurrency)
